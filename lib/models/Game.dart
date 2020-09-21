@@ -1,39 +1,29 @@
-
-
 class Game {
-   String _name;
-   String _genre;
-   String _summary;
-   String _cover;
-   String _checksum;
+   int id;
+   int cover;
+   List<int> genres;
+   String name;
+   String summary;
 
-   String get name => _name;
+   Game({this.id, this.cover, this.genres, this.name, this.summary});
 
-  set name(String value) {
-    _name = value;
-  }
+   factory Game.fromJson(Map <String, dynamic> json){
+     return Game(
+        id : json['id'],
+        name: json['name'],
+        genres: List<int>.from(json["genres"]),
+        summary: json['summary'],
+        cover: json['cover'],
+     );
+   }
 
-   String get genre => _genre;
-
-   String get checksum => _checksum;
-
-  set checksum(String value) {
-    _checksum = value;
-  }
-
-  String get cover => _cover;
-
-  set cover(String value) {
-    _cover = value;
-  }
-
-  String get summary => _summary;
-
-  set summary(String value) {
-    _summary = value;
-  }
-
-  set genre(String value) {
-    _genre = value;
-  }
+   Map<String, dynamic> toJson() {
+      final Map<String, dynamic> data = new Map<String, dynamic>();
+      data['id'] = this.id;
+      data['cover'] = this.cover;
+      data['genres'] = this.genres;
+      data['name'] = this.name;
+      data['summary'] = this.summary;
+      return data;
+   }
 }
