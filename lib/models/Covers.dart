@@ -1,9 +1,9 @@
 class Covers {
-  final int id;
-  final int game;
-  final int height;
-  final int width;
-  final String url;
+  int id;
+  int game;
+  int height;
+  int width;
+  String url;
 
   Covers({this.id, this.game, this.width, this.height, this.url});
 

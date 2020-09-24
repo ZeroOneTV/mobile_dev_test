@@ -11,9 +11,9 @@ class Game {
      return Game(
         id : json['id'],
         name: json['name'],
-        genres: List<int>.from(json["genres"]),
-        summary: json['summary'],
-        cover: json['cover'],
+        genres: List<int>.from(json['genres']??[]),
+        summary: json['summary']??'Dont Have summary',
+        cover: json['cover']?? 0,
      );
    }
 

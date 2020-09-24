@@ -1,14 +1,18 @@
 
 class Strings{
   static final String titleApp = "Game Lovers App";
-  static final String mainURL = 'https://api-v3.igdb.com/';
-  static final String platform = 'https://api-v3.igdb.com/platforms';
-  static final String genres = 'https://api-v3.igdb.com/genres';
-  static final String game = 'https://api-v3.igdb.com/games';
+  static final String mainURL = 'https://api.igdb.com/v4';
+  static final String platform = 'https://api.igdb.com/v4/platforms';
+  static final String genres = 'https://api.igdb.com/v4/genres';
+  static final String game = 'https://api.igdb.com/v4/games';
+  static final String covers = 'https://api.igdb.com/v4/covers';
+  static final String headerClientID = 'Client-ID';
+  static final String headerAuthorization = 'Authorization';
+  static final String headerClientIDValue = 'ja1f341hg84xs7fatm547rib45wr0u';
+  static final String headerAuthorizationValue = 'Bearer hovv82i5vsawviu6lh4yax6433va95';
+  static final String findCovers = 'fields id,game,height,width,url;';
   static final String findGame = 'fields id,name,genres,summary,cover;';
   static final String findPlatform = 'fields id,name;';
   static final String findGenre = 'fields id,name;';
-  static final String headerKey = 'user-key';
-  static final String headerValue = '9ecd712a42ba436ad133774f3bdb02d3';
-  static final String findCovers = 'fields id,game,height,width,url;';
+  static final String find = 'where game = ';
 }

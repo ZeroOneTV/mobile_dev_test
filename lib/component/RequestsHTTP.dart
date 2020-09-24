@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:mobile_dev_test/Strings.dart';
 import 'package:mobile_dev_test/models/Covers.dart';
 import 'package:mobile_dev_test/models/Game.dart';
+import 'package:mobile_dev_test/models/GameCover.dart';
 import 'package:mobile_dev_test/models/Genre.dart';
 import 'package:mobile_dev_test/models/Platform.dart';
 import 'package:http/http.dart' as http;
@@ -10,8 +11,9 @@ class RequestsHTTP {
 
   static Future<List<Game>> getGames() async{
     try{
-      final response = await http.post(Strings.mainURL,headers: {Strings.headerKey: Strings.headerValue},body: Strings.findGame);
-      if(response.statusCode == 200){
+      var response = await http.post(Strings.game,headers: {Strings.headerClientID: Strings.headerClientIDValue,
+        Strings.headerAuthorization: Strings.headerAuthorizationValue},body: Strings.findGame);
+      if(response.statusCode == 200) {
         List<Game> gamesMaped = parseGame(response.body);
         return gamesMaped;
       }else{
@@ -24,7 +26,8 @@ class RequestsHTTP {
 
   static Future<List<Genre>> getGenre() async {
         try{
-            final response = await http.post(Strings.mainURL,headers: {Strings.headerKey: Strings.headerValue},body: Strings.findGenre);
+            final response = await http.post(Strings.genres,headers: {Strings.headerClientID: Strings.headerClientIDValue,
+              Strings.headerAuthorization: Strings.headerAuthorizationValue},body: Strings.findGenre);
             if(response.statusCode == 200){
             List<Genre> gamesGenre = parseGenre(response.body);
             return gamesGenre;
@@ -38,7 +41,8 @@ class RequestsHTTP {
 
   static Future<List<Platform>> getPlatform() async{
     try{
-      final response = await http.post(Strings.mainURL,headers: {Strings.headerKey: Strings.headerValue},body: Strings.findPlatform);
+      final response = await http.post(Strings.platform,headers: {Strings.headerClientID: Strings.headerClientIDValue,
+        Strings.headerAuthorization: Strings.headerAuthorizationValue},body: Strings.findPlatform);
       if(response.statusCode == 200){
         List<Platform> gamesPlatform = parsePlatform(response.body);
         return gamesPlatform;
@@ -52,7 +56,8 @@ class RequestsHTTP {
 
   static Future<List<Covers>> getCovers() async{
     try{
-      final response = await http.post(Strings.mainURL,headers: {Strings.headerKey: Strings.headerValue},body: Strings.findCovers);
+      final response = await http.post(Strings.covers,headers: {Strings.headerClientID: Strings.headerClientIDValue,
+        Strings.headerAuthorization: Strings.headerAuthorizationValue},body: Strings.findCovers);
       if(response.statusCode == 200){
         List<Covers> gamesCovers = parseCovers(response.body);
         return gamesCovers;
@@ -60,6 +65,52 @@ class RequestsHTTP {
         throw Exception("Error");
       }
     }catch(e){
+      throw Exception(e.toString());
+    }
+  }
+
+  static Future<List<GameCover>> getGameWithCovers() async {
+    var client = http.Client();
+    List<GameCover> gameCover = new List<GameCover>();
+    try{
+      var response1 = await client.post(Strings.game,headers: {Strings.headerClientID: Strings.headerClientIDValue,
+        Strings.headerAuthorization: Strings.headerAuthorizationValue},body: Strings.findGame);
+      if(response1.statusCode == 200) {
+        List<Game> gamesMaped = parseGame(response1.body);
+        for(int i=0; i < gamesMaped.length;){
+          GameCover tempCover = new GameCover();
+          if((gamesMaped[i].cover != null) && (gamesMaped[i].cover != 0)){
+            String id_cover = gamesMaped[i].cover.toString();
+            try{
+              var responseCover = await client.post(Strings.covers,headers: {Strings.headerClientID: Strings.headerClientIDValue,
+                Strings.headerAuthorization: Strings.headerAuthorizationValue},body: Strings.findCovers+' '+Strings.find+' '+id_cover+';');
+              if((responseCover.statusCode == 200)){
+                List<Covers> covers = parseCovers(responseCover.body);
+                if(covers.length != 0){
+                  tempCover.id = gamesMaped[i].id;
+                  tempCover.name = gamesMaped[i].name;
+                  tempCover.url = covers[0].url;
+                  tempCover.width = covers[0].width;
+                  tempCover.height = covers[0].height;
+                  gameCover.add(tempCover);
+                  i+=1;
+               }else{
+                  i+=1;
+                }}else {
+                throw Exception("Error");
+              }
+            }catch(e){
+              throw Exception(e.toString());
+            }
+          }else{
+            i+=1;
+          }
+      }
+    }else {
+        throw Exception("Error");
+      }
+      return gameCover;
+    }catch (e) {
       throw Exception(e.toString());
     }
   }
@@ -85,10 +136,6 @@ class RequestsHTTP {
   }
 
 }
-
-// Future<Game> getGames() async {
-//   Response response = await post(Strings.game,headers: {Strings.headerKey: Strings.headerValue},body: Strings.findGame);
-//   List<Game> lisGame = jsonDecode(response.body).map((element) => Game.fromJson(element)).toList();
-//   print(lisGame);
-//   //Game.fromJson(lisGame);
-// }
+  //pra cada game, criar um objeto gameCover, atribuir id e name a gameCover.
+  //fazer a requisição de Cover pra cada game. Atribui altura,largura e url ao gameCover
+  //e adiciona o gameCover pra lista. depois disso retorna a lista com gameCover.
