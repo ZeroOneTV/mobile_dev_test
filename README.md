@@ -1,16 +1,14 @@
-# mobile_dev_test
+# Mobile Development Test (Partially resolved)
 
-Mobile Development Test
+About de development: https://github.com/HomeRefill/come-to-homerefill/tree/master/tests/mobile
 
-## Getting Started
+## About the configuration
 
-This project is a starting point for a Flutter application.
+This project was carried out without further build specifications. Only the default installation from the official [Flutter]https://flutter.dev/docs/get-started/install/windows
+About commands used, only occasional bugs that commonly occur, with the command "Flutter clean" in the project console.
 
-A few resources to get you started if this is your first Flutter project:
+## About the dependencies
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+The only dependency added was on the flutter's own [HTTP package]https://pub.dev/packages/http
+> http: ^0.12.2
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
