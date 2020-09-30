@@ -2,6 +2,6 @@
 
 class GameCover {
   int id,height,width;
-  String name,url;
+  String name,url,summary;
 
 }

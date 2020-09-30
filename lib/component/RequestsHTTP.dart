@@ -79,7 +79,7 @@ class RequestsHTTP {
         List<Game> gamesMaped = parseGame(response1.body);
         for(int i=0; i < gamesMaped.length;){
           GameCover tempCover = new GameCover();
-          if((gamesMaped[i].cover != null) && (gamesMaped[i].cover != 0)){
+          if(gamesMaped[i].cover != 0){
             String id_cover = gamesMaped[i].cover.toString();
             try{
               var responseCover = await client.post(Strings.covers,headers: {Strings.headerClientID: Strings.headerClientIDValue,
@@ -89,6 +89,7 @@ class RequestsHTTP {
                 if(covers.length != 0){
                   tempCover.id = gamesMaped[i].id;
                   tempCover.name = gamesMaped[i].name;
+                  tempCover.summary = gamesMaped[i].summary;
                   tempCover.url = covers[0].url;
                   tempCover.width = covers[0].width;
                   tempCover.height = covers[0].height;
@@ -103,12 +104,18 @@ class RequestsHTTP {
               throw Exception(e.toString());
             }
           }else{
+            tempCover.id = gamesMaped[i].id;
+            tempCover.name = gamesMaped[i].name;
+            tempCover.summary = gamesMaped[i].summary;
+            tempCover.url = Strings.fileNotFoundURL;
+            gameCover.add(tempCover);
             i+=1;
           }
       }
     }else {
         throw Exception("Error");
       }
+      client.close();
       return gameCover;
     }catch (e) {
       throw Exception(e.toString());
@@ -136,6 +143,3 @@ class RequestsHTTP {
   }
 
 }
-  //pra cada game, criar um objeto gameCover, atribuir id e name a gameCover.
-  //fazer a requisição de Cover pra cada game. Atribui altura,largura e url ao gameCover
-  //e adiciona o gameCover pra lista. depois disso retorna a lista com gameCover.

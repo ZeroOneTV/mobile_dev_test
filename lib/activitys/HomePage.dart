@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_dev_test/activitys/DescribeGame.dart';
 import 'package:mobile_dev_test/component/RequestsHTTP.dart';
 import 'package:mobile_dev_test/models/GameCover.dart';
+import 'package:mobile_dev_test/models/Platform.dart';
 
 import '../Strings.dart';
 
 
 class HomePage extends StatelessWidget {
-  static final String route = "HomePage";
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -15,6 +16,7 @@ class HomePage extends StatelessWidget {
     );
   }
 }
+
 class HomePageState extends StatefulWidget{
     HomePageState({Key key}) : super(key: key);
 
@@ -24,24 +26,35 @@ class HomePageState extends StatefulWidget{
 
 class _HomeAppState extends State<HomePageState> {
   Future<List<GameCover>> futureGameList;
+  Future<List<Platform>> futurePlatform;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: Drawer(
+        child: FutureBuilder(
+          future: futurePlatform,
+          builder: (context, AsyncSnapshot snapshot) {
+            if (!snapshot.hasData) {
+              return Center(child: CircularProgressIndicator());
+            } else {
+              return _platformListView(snapshot.data);
+            }
+          }),
+      ),
       appBar: AppBar(
         title: Text(Strings.titleApp),
         centerTitle: true,
+        backgroundColor: Colors.amber,
       ),
       body: Center(
           child: FutureBuilder<List<GameCover>>(
             future: futureGameList,
             builder: (context, AsyncSnapshot snapshot) {
               if (!snapshot.hasData) {
-                print("nope");
                 return Center(child: CircularProgressIndicator());
               } else {
-                print(snapshot.data);
-                return Container(child: gameGridView(snapshot.data));
+                return Container(child: _gameGridView(snapshot.data));
               }
             },
           )
@@ -54,26 +67,46 @@ class _HomeAppState extends State<HomePageState> {
   void initState() {
     super.initState();
     futureGameList = RequestsHTTP.getGameWithCovers();
+    futurePlatform = RequestsHTTP.getPlatform();
     }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
-  GridView gameGridView(List<GameCover> data) {
+}
+
+  ListView _platformListView(List<Platform> data){
+    return ListView.builder(
+        itemCount: data.length,
+        itemBuilder: (context, i) {
+          return ListTile(
+            title: Text(data[i].name),
+            onTap: (){
+              Navigator.pop(context);
+            },
+          );
+        },
+    );
+  }
+
+  GridView _gameGridView(List<GameCover> data) {
     return GridView.builder(
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2),
       itemCount: data.length,
       padding: EdgeInsets.all(2.0),
-      itemBuilder: (BuildContext context, int index) {
-        return _tile(
-            data[index].id.toString(), data[index].name, data[index].url);
+      itemBuilder: (BuildContext context, int i) {
+        return tile(context,data[i].id.toString(), data[i].name, data[i].url,data[i].summary);
       },
     );
   }
 
-  GridTile _tile(String id, String title, String coverUrl) =>
+  GridTile tile(BuildContext context,String id, String title, String coverUrl,String summary) =>
       GridTile(
           child: InkWell(
-              onTap: () => print("click"),
+              onTap: () =>  Navigator.of(context).push(MaterialPageRoute(builder: (context) => DescribeGameState(id: id,title: title,coverUrl: coverUrl,summary: summary))),
               child: Padding(
                   padding: EdgeInsets.all(8),
                   child: Container(
@@ -90,8 +123,7 @@ class _HomeAppState extends State<HomePageState> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
                             Container(
-                              child: Image.network(
-                                  coverUrl, fit: BoxFit.contain),
+                              child: Image.network(coverUrl, fit: BoxFit.fill),
                             ),
                             Container(
                               child: Text(title,
@@ -102,35 +134,3 @@ class _HomeAppState extends State<HomePageState> {
                                   )),
                             ),
                           ])))));
-
-// @override
-// Widget build(BuildContext context) {
-//   return Scaffold(
-//       appBar: AppBar(
-//         title: Text(Strings.titleApp),
-//         centerTitle: true,
-//       ),
-//       body: Center(
-//         child: GridView.count(
-//           primary: false,
-//           padding: const EdgeInsets.all(20),
-//           crossAxisSpacing: 10,
-//           mainAxisSpacing: 10,
-//           crossAxisCount: 2,
-//           children: <Widget>[
-//             Container(
-//               padding: const EdgeInsets.all(8),
-//               child: const Text('Revolution, they...'),
-//               color: Colors.teal[700],
-//             )
-//           ],
-//         ),
-//       ),
-//       floatingActionButton: FloatingActionButton(
-//         onPressed: ()  {
-//           RequestsHTTP request = new RequestsHTTP();
-//           //request.getGames();
-//         },
-//         child: Icon(Icons.navigation),
-//         backgroundColor: Colors.green,
-//       ));
